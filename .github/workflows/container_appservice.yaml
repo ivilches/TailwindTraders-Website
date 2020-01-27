@@ -27,15 +27,15 @@ jobs:
         docker build . -t ${{ secrets.REGISTRY_LOGIN_SERVER }}/tailwindtradersweb:gh-${{ github.sha }}
         docker push ${{ secrets.REGISTRY_LOGIN_SERVER }}/tailwindtradersweb:gh-${{ github.sha }} 
 
-    - uses: azure/appservice-settings@v1
-      with:
-        app-name: ${{ secrets.CONTAINER_APPSERVICE_NAME }}
-        app-settings-json: '${{ secrets.CONTAINER_APP_SETTINGS }}'
-
-    # - uses: azure/webapps-container-deploy@v1
+    # - uses: azure/appservice-settings@v1
     #   with:
     #     app-name: ${{ secrets.CONTAINER_APPSERVICE_NAME }}
-    #     images: '${{ secrets.REGISTRY_LOGIN_SERVER }}/tailwindtradersweb:${{ github.sha }}'
+    #     app-settings-json: '${{ secrets.CONTAINER_APP_SETTINGS }}'
+
+    - uses: azure/webapps-container-deploy@v1
+      with:
+        app-name: ${{ secrets.CONTAINER_APPSERVICE_NAME }}
+        images: '${{ secrets.REGISTRY_LOGIN_SERVER }}/tailwindtradersweb:${{ github.sha }}'
     
     - name: Azure logout
       run: |
