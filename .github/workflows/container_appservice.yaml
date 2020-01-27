@@ -32,10 +32,10 @@ jobs:
         app-name: ${{ secrets.CONTAINER_APPSERVICE_NAME }}
         app-settings-json: '${{ secrets.CONTAINER_APP_SETTINGS }}'
 
-    - uses: azure/webapps-container-deploy@v1
-      with:
-        app-name: ${{ secrets.CONTAINER_APPSERVICE_NAME }}
-        images: '${{ secrets.REGISTRY_LOGIN_SERVER }}/tailwindtradersweb:${{ github.sha }}'
+    # - uses: azure/webapps-container-deploy@v1
+    #   with:
+    #     app-name: ${{ secrets.CONTAINER_APPSERVICE_NAME }}
+    #     images: '${{ secrets.REGISTRY_LOGIN_SERVER }}/tailwindtradersweb:${{ github.sha }}'
     
     - name: Azure logout
       run: |
