@@ -1,6 +1,9 @@
-on: [push]
+name: Deploy in a containerized App Service
 
-name: Linux_Container_Workflow
+on:
+  push:
+    branches:
+      - master
 
 jobs:
   build-and-deploy:
@@ -40,4 +43,3 @@ jobs:
     - name: Azure logout
       run: |
         az logout
-
