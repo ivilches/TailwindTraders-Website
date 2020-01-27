@@ -35,7 +35,8 @@ jobs:
     - uses: azure/webapps-container-deploy@v1
       with:
         app-name: ${{ secrets.CONTAINER_APPSERVICE_NAME }}
-        images: '${{ secrets.REGISTRY_LOGIN_SERVER }}/tailwindtradersweb:${{ github.sha }}'
+        # images: '${{ secrets.REGISTRY_LOGIN_SERVER }}/tailwindtradersweb:${{ github.sha }}'
+        images: '${{ secrets.REGISTRY_LOGIN_SERVER }}/tailwindtradersweb:latest'
     
     - name: Azure logout
       run: |
