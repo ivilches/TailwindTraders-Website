@@ -25,9 +25,9 @@ jobs:
       working-directory: Source/Tailwind.Traders.Web
       run: | 
         # docker build . -t ${{ secrets.REGISTRY_LOGIN_SERVER }}/tailwindtradersweb:gh-${{ github.sha }}
-        docker build . -t ${{ secrets.REGISTRY_LOGIN_SERVER }}/tailwindtradersweb:latest
+        docker build . -t ${{ secrets.REGISTRY_LOGIN_SERVER }}/tailwindtradersweb:patata
         # docker push ${{ secrets.REGISTRY_LOGIN_SERVER }}/tailwindtradersweb:gh-${{ github.sha }}
-        docker push ${{ secrets.REGISTRY_LOGIN_SERVER }}/tailwindtradersweb:latest
+        docker push ${{ secrets.REGISTRY_LOGIN_SERVER }}/tailwindtradersweb:patata
 
     # - uses: azure/appservice-settings@v1
     #   with:
@@ -38,7 +38,7 @@ jobs:
       with:
         app-name: ${{ secrets.CONTAINER_APPSERVICE_NAME }}
         # images: '${{ secrets.REGISTRY_LOGIN_SERVER }}/tailwindtradersweb:${{ github.sha }}'
-        images: '${{ secrets.REGISTRY_LOGIN_SERVER }}/tailwindtradersweb:latest'
+        images: '${{ secrets.REGISTRY_LOGIN_SERVER }}/tailwindtradersweb:patata'
     
     - name: Azure logout
       run: |
