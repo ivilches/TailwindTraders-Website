@@ -1,11 +1,9 @@
 name: Deploy in a containerized App Service
 
-# on:
-#   push:
-#     branches:
-#       - master
-
-on: [push]
+on:
+  push:
+    branches:
+      - master
 
 jobs:
   build-and-deploy:
@@ -27,10 +25,8 @@ jobs:
     - name: Docker build and push
       working-directory: Source/Tailwind.Traders.Web
       run: | 
-        # docker build . -t tailwindtraders/web:gh-${{ github.sha }} -t latest
-        # docker push tailwindtraders/web:gh-${{ github.sha }}
-        docker build . -t ivilches/test:gh-${{ github.sha }} -t latest
-        docker push ivilches/test:gh-${{ github.sha }}
+        docker build . -t tailwindtraders/web:gh-${{ github.sha }} -t latest
+        docker push tailwindtraders/web:gh-${{ github.sha }}
 
     - uses: azure/appservice-settings@v1
       with:
@@ -40,7 +36,7 @@ jobs:
     - uses: azure/webapps-container-deploy@v1
       with:
         app-name: ${{ secrets.CONTAINER_APPSERVICE_NAME }}
-        images: 'ivilches/test:gh-${{ github.sha }}'
+        images: 'tailwindtraders/web:gh-${{ github.sha }}'
     
     - name: Azure logout
       run: |
