@@ -27,10 +27,8 @@ jobs:
     - name: Docker build and push
       working-directory: Source/Tailwind.Traders.Web
       run: | 
-        # docker build . -t tailwindtraders/web:gh-${{ github.sha }} -t latest
-        # docker push tailwindtraders/web:gh-${{ github.sha }}
-        docker build . -t ivilches/tests:gh-${{ github.sha }} -t latest
-        docker push ivilches/tests:gh-${{ github.sha }}
+        docker build . -t tailwindtraders/web:gh-${{ github.sha }} -t latest
+        docker push tailwindtraders/web:gh-${{ github.sha }}
 
     - uses: azure/appservice-settings@v1
       with:
@@ -40,9 +38,8 @@ jobs:
     - uses: azure/webapps-container-deploy@v1
       with:
         app-name: ${{ secrets.CONTAINER_APPSERVICE_NAME }}
-        images: 'ivilches/tests:gh-${{ github.sha }}'
+        images: 'tailwindtraders/web:gh-${{ github.sha }}'
     
     - name: Azure logout
       run: |
         az logout
-
