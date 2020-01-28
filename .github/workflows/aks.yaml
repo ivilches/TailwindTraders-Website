@@ -30,13 +30,13 @@ jobs:
         username: ${{ secrets.DOCKERHUB_USERNAME }} 
         password: ${{ secrets.DOCKERHUB_PASSWORD }}
     
-    - name: Docker build and push
-      working-directory: Source/Tailwind.Traders.Web
-      run: | 
-        # docker build . --build-arg sdkTag=2.1 --build-arg runtimeTag=2.1 -t tailwindtraders/web:gh-${{ github.sha }} -t latest
-        # docker push tailwindtraders/web:gh-${{ github.sha }}
-        docker build . --build-arg sdkTag=2.1 --build-arg runtimeTag=2.1 -t ivilches/tests:gh-${{ github.sha }} -t latest
-        docker push ivilches/tests:gh-${{ github.sha }}
+    # - name: Docker build and push
+    #   working-directory: Source/Tailwind.Traders.Web
+    #   run: | 
+    #     # docker build . --build-arg sdkTag=2.1 --build-arg runtimeTag=2.1 -t tailwindtraders/web:gh-${{ github.sha }} -t latest
+    #     # docker push tailwindtraders/web:gh-${{ github.sha }}
+    #     docker build . --build-arg sdkTag=2.1 --build-arg runtimeTag=2.1 -t ivilches/tests:gh-${{ github.sha }} -t latest
+    #     docker push ivilches/tests:gh-${{ github.sha }}
     
     # Set the target Azure Kubernetes Service (AKS) cluster. 
     - uses: azure/aks-set-context@v1
@@ -61,7 +61,7 @@ jobs:
     # Baking the helm chart to generate the manifests to deploy
     - uses: azure/k8s-bake@v1
       with:
-        renderEngine: 'helm2'
+        renderEngine: 'helm3'
         helmChart: '../../Deploy/helm' 
         helm-version: 'latest' 
       id: bake
@@ -71,7 +71,8 @@ jobs:
       with:
         manifests: ${{ steps.bake.outputs.manifestsBundle }}
         images: |
-          ivilches/tests:${{ github.sha }}
+          # ivilches/tests:${{ github.sha }}
+          ivilches/tests:gh-a5a236f744618bf0c2491a491af4b0a6bacb79e3
         imagepullsecrets: |
           ${{ env.REGISTRY_NAME }}-registry-connection
         namespace: ${{ env.NAMESPACE }}
