@@ -23,6 +23,10 @@ jobs:
         docker build . --build-arg sdkTag=2.1 --build-arg runtimeTag=2.1 -t ivilches/tests:gh-${{ github.sha }} -t latest
         docker push ivilches/tests:gh-${{ github.sha }}
 
+    - uses: azure/login@v1
+      with:
+        creds: '${{ secrets.AZURE_CREDENTIALS }}'
+
     - name: Set AKS kubectl context
       uses: azure/k8s-actions/aks-set-context@master
       with:

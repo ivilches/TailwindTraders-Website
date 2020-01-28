@@ -79,18 +79,28 @@ Write-Host " Images tag: $tag"  -ForegroundColor Red
 Write-Host " TLS/SSL environment to enable: $tlsEnv"  -ForegroundColor Red
 Write-Host " --------------------------------------------------------" 
 
-$acrLogin=$(az acr show -n $acrName -g $resourceGroup | ConvertFrom-Json).loginServer
+if (-not [string]::IsNullOrEmpty($acrName)) {
+    $acrLogin=$(az acr show -n $acrName -g $resourceGroup | ConvertFrom-Json).loginServer
+}
 
 if ($tlsEnv -ne "custom") {
     $aksHost=$(az aks show -n $aksName -g $resourceGroup | ConvertFrom-Json).addonProfiles.httpApplicationRouting.config.HTTPApplicationRoutingZoneName
 
-    Write-Host "acr login server is $acrLogin" -ForegroundColor Yellow
+    Write-Host "image repository login server is $repositoryLogin" -ForegroundColor Yellow
     Write-Host "aksHost is $aksHost" -ForegroundColor Yellow 
 }else {
     $aksHost=$tlsHost
 }
 
 validate
+
+if ([string]::IsNullOrEmpty($acrLogin)) {
+    $repositoryLogin = $acrLogin 
+}
+else {
+    # $repositoryLogin = "tailwindtraders"
+    $repositoryLogin = "ivilches"
+}
 
 $appinsightsId=""
 
@@ -107,7 +117,7 @@ if (-not [string]::IsNullOrEmpty($appInsightsName)) {
 Push-Location helm
 
 Write-Host "Deploying web chart" -ForegroundColor Yellow
-$command = createHelmCommand "helm upgrade --install $name -f $valuesFile -f $b2cValuesFile --set inf.appinsights.id=$appinsightsId --set az.productvisitsurl=$afHost --set ingress.hosts={$aksHost} --set image.repository=$acrLogin/web --set image.tag=$tag" "web" 
+$command = createHelmCommand "helm upgrade --install $name -f $valuesFile -f $b2cValuesFile --set inf.appinsights.id=$appinsightsId --set az.productvisitsurl=$afHost --set ingress.hosts={$aksHost} --set image.repository=$repositoryLogin/tailwindtraders --set image.tag=$tag" "web" 
 cmd /c "$command"
 Pop-Location
 
