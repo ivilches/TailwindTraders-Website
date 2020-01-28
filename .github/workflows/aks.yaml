@@ -13,7 +13,7 @@ on: [push]
 
 # Environment variables available to all jobs and steps in this workflow
 env:
-  REGISTRY_NAME: https://index.docker.io
+  REGISTRY_NAME: index.docker.io
   CLUSTER_NAME: tailwindtradersakstjchxjtnkbdoi
   CLUSTER_RESOURCE_GROUP: tt-linux-cicd
   NAMESPACE: default
