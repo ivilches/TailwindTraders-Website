@@ -1,78 +1,65 @@
-# This workflow will build a docker container, publish it to Azure Container Registry, and deploy it to Azure Kubernetes Service using a helm chart.
-#
-# To configure this workflow:
-#
-# 1. Set up the following secrets in your workspace: 
-#     a. REGISTRY_USERNAME with ACR username
-#     b. REGISTRY_PASSWORD with ACR Password
-#     c. AZURE_CREDENTIALS with the output of `az ad sp create-for-rbac --sdk-auth`
-#
-# 2. Change the values for the REGISTRY_NAME, CLUSTER_NAME, CLUSTER_RESOURCE_GROUP and NAMESPACE environment variables (below).
+# Web Workflow
 
-on: [push]
+name: Web
 
-# Environment variables available to all jobs and steps in this workflow
-env:
-  REGISTRY_NAME: index.docker.io
-  CLUSTER_NAME: tailwindtradersakstjchxjtnkbdoi
-  CLUSTER_RESOURCE_GROUP: tt-linux-cicd
-  NAMESPACE: default
+on: 
+  push:
+    paths:
+    - Source/Services/RPSLS.Web/**
+    - .github/workflows/web-cicd.yml
+    - Source/Services/RPSLS.ModelUploader.Web/**
+    - Deploy/helm/web/**
+    branches:
+      - master    
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
+  buildpush:
+    runs-on: ubuntu-16.04
     steps:
-    - uses: actions/checkout@master
-    
+    - uses: actions/checkout@v1
     # Connect to Azure Container registry (ACR)
     - uses: azure/docker-login@v1
       with:
         username: ${{ secrets.DOCKERHUB_USERNAME }} 
         password: ${{ secrets.DOCKERHUB_PASSWORD }}
     
-    # - name: Docker build and push
-    #   working-directory: Source/Tailwind.Traders.Web
-    #   run: | 
-    #     # docker build . --build-arg sdkTag=2.1 --build-arg runtimeTag=2.1 -t tailwindtraders/web:gh-${{ github.sha }} -t latest
-    #     # docker push tailwindtraders/web:gh-${{ github.sha }}
-    #     docker build . --build-arg sdkTag=2.1 --build-arg runtimeTag=2.1 -t ivilches/tests:gh-${{ github.sha }} -t latest
-    #     docker push ivilches/tests:gh-${{ github.sha }}
-    
-    # Set the target Azure Kubernetes Service (AKS) cluster. 
-    - uses: azure/aks-set-context@v1
+    - name: Docker build and push
+      working-directory: Source/Tailwind.Traders.Web
+      run: | 
+        # docker build . --build-arg sdkTag=2.1 --build-arg runtimeTag=2.1 -t tailwindtraders/web:gh-${{ github.sha }} -t latest
+        # docker push tailwindtraders/web:gh-${{ github.sha }}
+        docker build . --build-arg sdkTag=2.1 --build-arg runtimeTag=2.1 -t ivilches/tests:gh-${{ github.sha }} -t latest
+        docker push ivilches/tests:gh-${{ github.sha }}
+
+    - name: Set AKS kubectl context
+      uses: azure/k8s-actions/aks-set-context@master
       with:
         creds: '${{ secrets.AZURE_CREDENTIALS }}'
-        cluster-name: ${{ env.CLUSTER_NAME }}
-        resource-group: ${{ env.CLUSTER_RESOURCE_GROUP }}
-    
-    # Create namespace if doesn't exist
-    - run: |
-        kubectl create namespace ${{ env.NAMESPACE }} --dry-run -o json | kubectl apply -f -
-    
-    # Create imagepullsecret for Azure Container registry (ACR)
-    - uses: azure/k8s-create-secret@v1
-      with:
-        container-registry-url: ${{ env.REGISTRY_NAME }}
-        container-registry-username: ${{ secrets.REGISTRY_USERNAME }}
-        container-registry-password: ${{ secrets.REGISTRY_PASSWORD }}
-        secret-name: ${{ env.REGISTRY_NAME }}-registry-connection
-        namespace: ${{ env.NAMESPACE }}
+        cluster-name: ${{ secrets.CLUSTER_NAME }}
+        resource-group: ${{ secrets.RESOURCE_GROUP }}        
+    - name: Init Helm
+      run: |
+        curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 > get_helm.sh
+        chmod 700 get_helm.sh
+        ./get_helm.sh
+        # az acr helm repo add -n ${{ secrets.ACR_NAME }}
+    # - name: Package Helm chart
+    #   run: |
+    #     helm package  Deploy/helm/web -d Deploy/helm/__charts --version 1.0.0-${{ github.sha }}
+    # - name: Upload chart to ACR
+    #   run: |
+    #     az acr helm push Deploy/helm/__charts/web-1.0.0-${{ github.sha }}.tgz -n ${{ secrets.ACR_NAME }}
+    # - name: Generate config file
+    #   shell: pwsh
+    #   run: |
+    #     az extension add --name application-insights
+    #     Deploy/powershell/Generate-Config.ps1 -gvaluesTemplate gvalues.template.gh -resourceGroup ${{ secrets.RESOURCE_GROUP }} -outputFile _values-gh.yaml -twitterKey ${{ secrets.TWITTER_KEY }} -twitterSecret ${{ secrets.TWITTER_SECRET }} -sslSupport custom -aksHost ${{ secrets.AKS_HOST }} -googleanalytics ${{ secrets.GOOGLE_ANALYTICS }} -configScale y -resourceGroupAcr ${{ secrets.RESOURCE_GROUP_ACR }}
+    - name: Install Helm Chart
+      shell: pwsh
+      run: |
+        helm repo update
+        # helm upgrade --install web -f Deploy/helm/gvalues.yaml -f Deploy/helm/values.b2c.yaml --set inf.appinsights.id="" --set az.productvisitsurl="" --set ingress.hosts={$aksHost} --set image.repository=ivilches/tailwindtraders --set image.tag=${{ github.sha }}
+        # helm upgrade --install -f Deploy/powershell/_values-gh.yaml --set image.repository=${{ secrets.ACR_NAME }}.azurecr.io/web --set image.tag=gh-${{ github.sha }} --set image.uploaderRepository=${{ secrets.ACR_NAME }}.azurecr.io/modeluploader --set image.uploaderTag=gh-${{ github.sha }} --set uploaderEnabled=false --set scaleWeb=true --set replicaCount=2 web  ${{ secrets.ACR_NAME }}/web --version=1.0.0-${{ github.sha }}
+        Deploy\DeployWebAKS.ps1 -name web -aksName ${{ secrets.CLUSTER_NAME }} -resourceGroup ${{ secrets.RESOURCE_GROUP }} -tag gh-${{ github.sha }}
 
-    # Baking the helm chart to generate the manifests to deploy
-    - uses: azure/k8s-bake@v1
-      with:
-        renderEngine: 'helm3'
-        helmChart: '../../Deploy/helm' 
-        helm-version: 'latest' 
-      id: bake
 
-    # Deploy app to AKS
-    - uses: azure/k8s-deploy@v1
-      with:
-        manifests: ${{ steps.bake.outputs.manifestsBundle }}
-        images: |
-          # ivilches/tests:${{ github.sha }}
-          ivilches/tests:gh-a5a236f744618bf0c2491a491af4b0a6bacb79e3
-        imagepullsecrets: |
-          ${{ env.REGISTRY_NAME }}-registry-connection
-        namespace: ${{ env.NAMESPACE }}
