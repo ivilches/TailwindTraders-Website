@@ -1,16 +1,8 @@
 # Web Workflow
 
-name: Web
+name: Web in AKS
 
-on: 
-  push:
-    paths:
-    - Source/Services/RPSLS.Web/**
-    - .github/workflows/web-cicd.yml
-    - Source/Services/RPSLS.ModelUploader.Web/**
-    - Deploy/helm/web/**
-    branches:
-      - master    
+on: [push]
 
 jobs:
   buildpush:
