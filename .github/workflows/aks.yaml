@@ -36,27 +36,7 @@ jobs:
     - name: Get AKS host
       id: aks_host
       shell: pwsh
-      # run: echo ::set-output name=aks_hostname::$($(az aks show -n ${{ secrets.CLUSTER_NAME }} -g ${{ secrets.CLUSTER_RESOURCE_GROUP }} | ConvertFrom-Json).addonProfiles.httpApplicationRouting.config.HTTPApplicationRoutingZoneName)
-      run: echo "::set-output name=host_name::$($(az aks show -n ${{ secrets.CLUSTER_NAME }} -g ${{ secrets.CLUSTER_RESOURCE_GROUP }} | ConvertFrom-Json).addonProfiles.httpApplicationRouting.config.HTTPApplicationRoutingZoneName)"
-      # run: echo "::set-env name=AKS_NAME::fcacb0f417a84590bb54.eastus.aksapp.io"
-
-    # - name: Other test
-    #   shell: pwsh
-    #   run: az aks show --resource-group ${{ secrets.CLUSTER_RESOURCE_GROUP }} --name ${{ secrets.CLUSTER_NAME }} --query addonProfiles.httpapplicationrouting.config.HTTPApplicationRoutingZoneName -o table
-
-    - name: Test
-      shell: pwsh
-      run: echo ${{ steps.aks_host.outputs.host_name }}
-
-    # - name: Set env
-    #   shell: pwsh
-    #   run: echo ::set-env name=AKS_HOSTNAME::$(az aks show --resource-group ${{ secrets.CLUSTER_RESOURCE_GROUP }} --name ${{ secrets.CLUSTER_NAME }} --query addonProfiles.httpapplicationrouting.config.HTTPApplicationRoutingZoneName -o table)
-    
-    # - name: Test env
-    #   run: echo $AKS_HOSTNAME
-    
-    # - name: Test env
-    #   run: echo ${{ env.AKS_NAME }}
+      run: echo "::set-output name=host_name::$(az aks show -n ${{ secrets.CLUSTER_NAME }} -g ${{ secrets.CLUSTER_RESOURCE_GROUP }} | ConvertFrom-Json).addonProfiles.httpApplicationRouting.config.HTTPApplicationRoutingZoneName"
     
     - name: Set AKS kubectl context
       uses: azure/aks-set-context@v1
