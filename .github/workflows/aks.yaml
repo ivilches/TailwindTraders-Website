@@ -27,6 +27,15 @@ jobs:
       with:
         creds: '${{ secrets.AZURE_CREDENTIALS }}'
 
+    - name: Get AKS host
+      id: aks_host
+      shell: pwsh
+      run: echo "::set-output name=aks_hostname::$(az aks show -n ${{ secrets.CLUSTER_NAME }} -g ${{ secrets.CLUSTER_RESOURCE_GROUP }} | ConvertFrom-Json).addonProfiles.httpApplicationRouting.config.HTTPApplicationRoutingZoneName"
+
+    - name: Test
+      shell: pwsh
+      run: echo ${{ steps.aks_host.outputs.aks_hostname }}
+
     - name: Set AKS kubectl context
       uses: azure/aks-set-context@v1
       with:
