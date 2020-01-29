@@ -37,11 +37,6 @@ jobs:
       shell: pwsh
       run: $(az aks show -n ${{ secrets.CLUSTER_NAME }} -g ${{ secrets.RESOURCE_GROUP }} | ConvertFrom-Json).addonProfiles.httpApplicationRouting.config.HTTPApplicationRoutingZoneName
       id: aks_host
-
-    - name: Directory content
-      working-directory: ${{github.workspace}}
-      shell: pwsh
-      run: ls
     - uses: azure/k8s-bake@v1
       with:
         renderEngine: 'helm2'
@@ -51,7 +46,6 @@ jobs:
           image.tag:gh-aad5aa4a3a1e79f288919ab2442d57946d980f17
           name:web
           image.repository:ivilches/tests
-          # ingress.hosts:${{ steps.aks_host.outputs }}
           ingress.hosts:fcacb0f417a84590bb54.eastus.aksapp.io
       id: bake 
     - name: Install Helm Chart
