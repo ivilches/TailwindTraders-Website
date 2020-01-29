@@ -34,8 +34,8 @@ jobs:
         cluster-name: ${{ secrets.CLUSTER_NAME }}
         resource-group: ${{ secrets.RESOURCE_GROUP }}
     - name: Fetch AKS host
-        shell: pwsh
-        run: $(az aks show -n ${{ secrets.CLUSTER_NAME }} -g ${{ secrets.RESOURCE_GROUP }} | ConvertFrom-Json).addonProfiles.httpApplicationRouting.config.HTTPApplicationRoutingZoneName
+      shell: pwsh
+      run: $(az aks show -n ${{ secrets.CLUSTER_NAME }} -g ${{ secrets.RESOURCE_GROUP }} | ConvertFrom-Json).addonProfiles.httpApplicationRouting.config.HTTPApplicationRoutingZoneName
       id: aks_host
     - uses: azure/k8s-bake@v1
       with:
