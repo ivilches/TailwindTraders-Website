@@ -83,6 +83,12 @@ if (-not [string]::IsNullOrEmpty($acrName)) {
     $acrLogin=$(az acr show -n $acrName -g $resourceGroup | ConvertFrom-Json).loginServer
 }
 
+$repositoryLogin = "ivilches"
+
+if ([string]::IsNullOrEmpty($acrLogin)) {
+    $acrLogin = $repositoryLogin 
+}
+
 if ($tlsEnv -ne "custom") {
     $aksHost=$(az aks show -n $aksName -g $resourceGroup | ConvertFrom-Json).addonProfiles.httpApplicationRouting.config.HTTPApplicationRoutingZoneName
 
@@ -94,13 +100,6 @@ if ($tlsEnv -ne "custom") {
 
 validate
 
-if ([string]::IsNullOrEmpty($acrLogin)) {
-    $repositoryLogin = $acrLogin 
-}
-else {
-    # $repositoryLogin = "tailwindtraders"
-    $repositoryLogin = "ivilches"
-}
 
 $appinsightsId=""
 
