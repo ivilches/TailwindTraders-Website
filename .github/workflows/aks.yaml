@@ -27,18 +27,25 @@ jobs:
       with:
         creds: '${{ secrets.AZURE_CREDENTIALS }}'
 
-    # - name: Get AKS host
-    #   id: aks_host
-    #   shell: pwsh
-    #   run: echo "::set-output name=aks_hostname::$(az aks show --resource-group ${{ secrets.CLUSTER_RESOURCE_GROUP }} --name ${{ secrets.CLUSTER_NAME }} --query addonProfiles.httpapplicationrouting.config.HTTPApplicationRoutingZoneName)"
+    
+    - name: Install aks-preview
+      shell: pwsh
+      run: |
+        az extension add --name aks-preview
+        az extension update --name aks-preview
+
+    - name: Get AKS host
+      id: aks_host
+      shell: pwsh
+      run: echo "::set-output name=aks_hostname::$(az aks show --resource-group ${{ secrets.CLUSTER_RESOURCE_GROUP }} --name ${{ secrets.CLUSTER_NAME }} --query addonProfiles.httpapplicationrouting.config.HTTPApplicationRoutingZoneName)"
 
     # - name: Other test
     #   shell: pwsh
     #   run: az aks show --resource-group ${{ secrets.CLUSTER_RESOURCE_GROUP }} --name ${{ secrets.CLUSTER_NAME }} --query addonProfiles.httpapplicationrouting.config.HTTPApplicationRoutingZoneName -o table
 
-    # - name: Test
-    #   shell: pwsh
-    #   run: echo ${{ steps.aks_host.outputs.aks_hostname }}
+    - name: Test
+      shell: pwsh
+      run: echo ${{ steps.aks_host.outputs.aks_hostname }}
 
     - name: Set env
       shell: pwsh
