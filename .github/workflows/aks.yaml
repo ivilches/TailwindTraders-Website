@@ -45,4 +45,4 @@ jobs:
       shell: pwsh
       run: |
         # helm upgrade --install tailwindtraders-web ./Deploy/helm/web -f ./Deploy/helm/gvalues.yaml -f ./Deploy/helm/values.b2c.yaml --set ingress.protocol=http --set ingress.hosts[0]=fcacb0f417a84590bb54.eastus.aksapp.io --set image.repository=ivilches/tailwindtraders --set image.tag=gh-${{ github.sha }}
-        helm upgrade --install tailwindtraders-web ./Deploy/helm/web -f ./Deploy/helm/gvalues.yaml -f ./Deploy/helm/values.b2c.yaml --set ingress.protocol=http --set ingress.hosts[0]=fcacb0f417a84590bb54.eastus.aksapp.io --set image.repository=ivilches/tailwindtraders --set image.tag=gh-2ab7f7516b35fff9f766ad0b2635b69e8474acbd
+        helm upgrade --install tailwindtraders-web ./Deploy/helm/web -f ./Deploy/helm/gvalues.yaml -f ./Deploy/helm/values.b2c.yaml --set ingress.protocol=http --set ingress.hosts[0]=fcacb0f417a84590bb54.eastus.aksapp.io --set image.repository=ivilches/tailwindtraders --set image.tag=gh-d2e6b1d6ff6936db47877f461faf03533dd833c5
