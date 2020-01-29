@@ -30,7 +30,8 @@ jobs:
     - name: Get AKS host
       id: aks_host
       shell: pwsh
-      run: echo "::set-output name=aks_hostname::$(az aks show --resource-group ${{ secrets.CLUSTER_RESOURCE_GROUP }} --name ${{ secrets.CLUSTER_NAME }} --query addonProfiles.httpapplicationrouting.config.HTTPApplicationRoutingZoneName)"
+      # run: echo "::set-output name=aks_hostname::$(az aks show --resource-group ${{ secrets.CLUSTER_RESOURCE_GROUP }} --name ${{ secrets.CLUSTER_NAME }} --query addonProfiles.httpapplicationrouting.config.HTTPApplicationRoutingZoneName)"
+      run: echo "::set-output name=aks_hostname::prueba"
 
     # - name: Other test
     #   shell: pwsh
