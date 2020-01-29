@@ -1,3 +1,31 @@
+Skip to content
+Search or jump to…
+
+Pull requests
+Issues
+Marketplace
+Explore
+ 
+@ivilches 
+ivilches
+/
+TailwindTraders-Website
+forked from microsoft/TailwindTraders-Website
+1
+0511
+ Code Pull requests 0 Actions Projects 0 Wiki Security Insights Settings
+sdaf
+feature/ghaction_aks ivilches@plainconcepts.com  45f9915
+ 
+Web in AKS
+on: push
+ 
+ 2 other workflows ran on this commit
+Show
+Web in AKS
+This run
+Workflow file
+.github/workflows/aks.yaml
 # Web Workflow
 
 name: Web in AKS
@@ -32,11 +60,30 @@ jobs:
       shell: pwsh
       run: |
         az extension add --name aks-preview
-
     - name: Get AKS host
       id: aks_host
       shell: pwsh
-      run: echo "::set-output name=host_name::($(az aks show -n ${{ secrets.CLUSTER_NAME }} -g ${{ secrets.CLUSTER_RESOURCE_GROUP }} | ConvertFrom-Json).addonProfiles.httpApplicationRouting.config.HTTPApplicationRoutingZoneName)"
+      # run: echo ::set-output name=aks_hostname::$($(az aks show -n ${{ secrets.CLUSTER_NAME }} -g ${{ secrets.CLUSTER_RESOURCE_GROUP }} | ConvertFrom-Json).addonProfiles.httpApplicationRouting.config.HTTPApplicationRoutingZoneName)
+      run: echo "::set-output name=host_name::$($(az aks show -n ${{ secrets.CLUSTER_NAME }} -g ${{ secrets.CLUSTER_RESOURCE_GROUP }} | ConvertFrom-Json).addonProfiles.httpApplicationRouting.config.HTTPApplicationRoutingZoneName)"
+      # run: echo "::set-env name=AKS_NAME::fcacb0f417a84590bb54.eastus.aksapp.io"
+
+    # - name: Other test
+    #   shell: pwsh
+    #   run: az aks show --resource-group ${{ secrets.CLUSTER_RESOURCE_GROUP }} --name ${{ secrets.CLUSTER_NAME }} --query addonProfiles.httpapplicationrouting.config.HTTPApplicationRoutingZoneName -o table
+
+    - name: Test
+      shell: pwsh
+      run: echo ${{ steps.aks_host.outputs.host_name }}
+
+    # - name: Set env
+    #   shell: pwsh
+    #   run: echo ::set-env name=AKS_HOSTNAME::$(az aks show --resource-group ${{ secrets.CLUSTER_RESOURCE_GROUP }} --name ${{ secrets.CLUSTER_NAME }} --query addonProfiles.httpapplicationrouting.config.HTTPApplicationRoutingZoneName -o table)
+    
+    # - name: Test env
+    #   run: echo $AKS_HOSTNAME
+    
+    # - name: Test env
+    #   run: echo ${{ env.AKS_NAME }}
     
     - name: Set AKS kubectl context
       uses: azure/aks-set-context@v1
@@ -51,7 +98,6 @@ jobs:
         chmod 700 get_helm.sh
         ./get_helm.sh
         export PATH=/usr/local/bin/helm
-
     - name: Install Helm Chart
       shell: pwsh
       run: |
