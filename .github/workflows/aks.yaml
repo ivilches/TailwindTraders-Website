@@ -66,4 +66,4 @@ jobs:
       # working-directory: ./Deploy
       shell: pwsh
       run: |
-        helm upgrade --install webtest ./Deploy/helm/web -f ./Deploy/helm/gvalues.yaml -f ./Deploy/helm/values.b2c.yaml --set inf.appinsights.id="" --set ingress.hosts[0]=fcacb0f417a84590bb54.eastus.aksapp.io --set image.repository=ivilches/tailwindtraders --set image.tag=gh-2ab7f7516b35fff9f766ad0b2635b69e8474acbd --dry-run
+        helm upgrade --install web ./Deploy/helm/web -f ./Deploy/helm/gvalues.yaml -f ./Deploy/helm/values.b2c.yaml --set inf.appinsights.id="" --set ingress.hosts[0]=fcacb0f417a84590bb54.eastus.aksapp.io --set image.repository=ivilches/tailwindtraders --set image.tag=gh-2ab7f7516b35fff9f766ad0b2635b69e8474acbd --dry-run
