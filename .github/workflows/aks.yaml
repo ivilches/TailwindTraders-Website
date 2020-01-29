@@ -46,7 +46,10 @@ jobs:
     
     - name: Test env
       run: echo $AKS_HOSTNAME
-
+    
+    - name: Test env
+      run: echo "df"
+    
     # - name: Set AKS kubectl context
     #   uses: azure/aks-set-context@v1
     #   with:
