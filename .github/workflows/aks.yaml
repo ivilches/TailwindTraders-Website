@@ -27,31 +27,35 @@ jobs:
       with:
         creds: '${{ secrets.AZURE_CREDENTIALS }}'
 
-    - name: Get AKS host
-      id: aks_host
+    # - name: Get AKS host
+    #   id: aks_host
+    #   shell: pwsh
+    #   run: echo "::set-output name=aks_hostname::$(az aks show -n ${{ secrets.CLUSTER_NAME }} -g ${{ secrets.CLUSTER_RESOURCE_GROUP }} | ConvertFrom-Json).addonProfiles.httpApplicationRouting.config.HTTPApplicationRoutingZoneName"
+
+    - name: Other test
       shell: pwsh
-      run: echo "::set-output name=aks_hostname::$(az aks show -n ${{ secrets.CLUSTER_NAME }} -g ${{ secrets.CLUSTER_RESOURCE_GROUP }} | ConvertFrom-Json).addonProfiles.httpApplicationRouting.config.HTTPApplicationRoutingZoneName"
+      run: az aks show -n ${{ secrets.CLUSTER_NAME }} -g ${{ secrets.CLUSTER_RESOURCE_GROUP }}
 
-    - name: Test
-      shell: pwsh
-      run: echo ${{ steps.aks_host.outputs.aks_hostname }}
+    # - name: Test
+    #   shell: pwsh
+    #   run: echo ${{ steps.aks_host.outputs.aks_hostname }}
 
-    - name: Set AKS kubectl context
-      uses: azure/aks-set-context@v1
-      with:
-        creds: '${{ secrets.AZURE_CREDENTIALS }}'
-        cluster-name: ${{ secrets.CLUSTER_NAME }}
-        resource-group: ${{ secrets.RESOURCE_GROUP }}
+    # - name: Set AKS kubectl context
+    #   uses: azure/aks-set-context@v1
+    #   with:
+    #     creds: '${{ secrets.AZURE_CREDENTIALS }}'
+    #     cluster-name: ${{ secrets.CLUSTER_NAME }}
+    #     resource-group: ${{ secrets.RESOURCE_GROUP }}
 
-    - name: Install Helm
-      run: |
-        curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 > get_helm.sh
-        chmod 700 get_helm.sh
-        ./get_helm.sh
-        export PATH=/usr/local/bin/helm
+    # - name: Install Helm
+    #   run: |
+    #     curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 > get_helm.sh
+    #     chmod 700 get_helm.sh
+    #     ./get_helm.sh
+    #     export PATH=/usr/local/bin/helm
 
-    - name: Install Helm Chart
-      shell: pwsh
-      run: |
-        # helm upgrade --install tailwindtraders-web ./Deploy/helm/web -f ./Deploy/helm/gvalues.yaml -f ./Deploy/helm/values.b2c.yaml --set ingress.protocol=http --set ingress.hosts[0]=fcacb0f417a84590bb54.eastus.aksapp.io --set image.repository=ivilches/tailwindtraders --set image.tag=gh-${{ github.sha }}
-        helm upgrade --install tailwindtraders-web ./Deploy/helm/web -f ./Deploy/helm/gvalues.yaml -f ./Deploy/helm/values.b2c.yaml --set ingress.protocol=http --set ingress.hosts[0]=fcacb0f417a84590bb54.eastus.aksapp.io --set image.repository=ivilches/tailwindtraders --set image.tag=gh-d2e6b1d6ff6936db47877f461faf03533dd833c5
+    # - name: Install Helm Chart
+    #   shell: pwsh
+    #   run: |
+    #     # helm upgrade --install tailwindtraders-web ./Deploy/helm/web -f ./Deploy/helm/gvalues.yaml -f ./Deploy/helm/values.b2c.yaml --set ingress.protocol=http --set ingress.hosts[0]=fcacb0f417a84590bb54.eastus.aksapp.io --set image.repository=ivilches/tailwindtraders --set image.tag=gh-${{ github.sha }}
+    #     helm upgrade --install tailwindtraders-web ./Deploy/helm/web -f ./Deploy/helm/gvalues.yaml -f ./Deploy/helm/values.b2c.yaml --set ingress.protocol=http --set ingress.hosts[0]=fcacb0f417a84590bb54.eastus.aksapp.io --set image.repository=ivilches/tailwindtraders --set image.tag=gh-d2e6b1d6ff6936db47877f461faf03533dd833c5
