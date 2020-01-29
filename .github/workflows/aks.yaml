@@ -36,7 +36,8 @@ jobs:
     - name: Get AKS host
       id: aks_host
       shell: pwsh
-      run: echo ::set-output name=aks_hostname::$($(az aks show -n ${{ secrets.CLUSTER_NAME }} -g ${{ secrets.CLUSTER_RESOURCE_GROUP }} | ConvertFrom-Json).addonProfiles.httpApplicationRouting.config.HTTPApplicationRoutingZoneName)
+      # run: echo ::set-output name=aks_hostname::$($(az aks show -n ${{ secrets.CLUSTER_NAME }} -g ${{ secrets.CLUSTER_RESOURCE_GROUP }} | ConvertFrom-Json).addonProfiles.httpApplicationRouting.config.HTTPApplicationRoutingZoneName)
+      run: echo ::set-env name=AKS_NAME::$(az aks show -n ${{ secrets.CLUSTER_NAME }} -g ${{ secrets.CLUSTER_RESOURCE_GROUP }} | ConvertFrom-Json).addonProfiles.httpApplicationRouting.config.HTTPApplicationRoutingZoneName
 
     # - name: Other test
     #   shell: pwsh
@@ -74,4 +75,4 @@ jobs:
       shell: pwsh
       run: |
         # helm upgrade --install tailwindtraders-web ./Deploy/helm/web -f ./Deploy/helm/gvalues.yaml -f ./Deploy/helm/values.b2c.yaml --set ingress.protocol=http --set ingress.hosts[0]=fcacb0f417a84590bb54.eastus.aksapp.io --set image.repository=ivilches/tailwindtraders --set image.tag=gh-${{ github.sha }}
-        helm upgrade --install tailwindtraders-web ./Deploy/helm/web -f ./Deploy/helm/gvalues.yaml -f ./Deploy/helm/values.b2c.yaml --set ingress.protocol=http --set ingress.hosts[0]=fcacb0f417a84590bb54.eastus.aksapp.io --set image.repository=ivilches/tailwindtraders --set image.tag=gh-d2e6b1d6ff6936db47877f461faf03533dd833c5
+        helm upgrade --install tailwindtraders-web ./Deploy/helm/web -f ./Deploy/helm/gvalues.yaml -f ./Deploy/helm/values.b2c.yaml --set ingress.protocol=http --set ingress.hosts[0]=${{ env.AKS_NAME }} --set image.repository=ivilches/tailwindtraders --set image.tag=gh-d2e6b1d6ff6936db47877f461faf03533dd833c5
