@@ -40,7 +40,7 @@ jobs:
     - uses: azure/k8s-bake@v1
       with:
         renderEngine: 'helm2'
-        helmChart: './Deploy/helm/' 
+        helmChart: './ADeploy/helm/' 
         helm-version: 'latest'
         overrides: |
           image.tag:gh-aad5aa4a3a1e79f288919ab2442d57946d980f17
