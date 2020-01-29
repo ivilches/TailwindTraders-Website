@@ -21,7 +21,7 @@ jobs:
         # docker build . --build-arg sdkTag=2.1 --build-arg runtimeTag=2.1 -t tailwindtraders/web:gh-${{ github.sha }} -t latest
         # docker push tailwindtraders/web:gh-${{ github.sha }}
         docker build . --build-arg sdkTag=2.1 --build-arg runtimeTag=2.1 -t ivilches/tailwindtraders:gh-${{ github.sha }} -t latest
-        docker push ivilches/tests:gh-${{ github.sha }}
+        docker push ivilches/tailwindtraders:gh-${{ github.sha }}
 
     - uses: azure/login@v1
       with:
@@ -49,9 +49,10 @@ jobs:
     #       ingress.hosts:fcacb0f417a84590bb54.eastus.aksapp.io
     #   id: bake 
     - name: Install Helm Chart
+      working-directory: ./Deploy
       shell: pwsh
       run: |
         helm repo update
         # helm upgrade --install web -f Deploy/helm/gvalues.yaml -f Deploy/helm/values.b2c.yaml --set inf.appinsights.id="" --set az.productvisitsurl="" --set ingress.hosts={$aksHost} --set image.repository=ivilches/tailwindtraders --set image.tag=${{ github.sha }}
         # helm upgrade --install -f Deploy/powershell/_values-gh.yaml --set image.repository=${{ secrets.ACR_NAME }}.azurecr.io/web --set image.tag=gh-${{ github.sha }} --set image.uploaderRepository=${{ secrets.ACR_NAME }}.azurecr.io/modeluploader --set image.uploaderTag=gh-${{ github.sha }} --set uploaderEnabled=false --set scaleWeb=true --set replicaCount=2 web  ${{ secrets.ACR_NAME }}/web --version=1.0.0-${{ github.sha }}
-        Deploy\DeployWebAKS.ps1 -name web -aksName ${{ secrets.CLUSTER_NAME }} -resourceGroup ${{ secrets.RESOURCE_GROUP }} -tag gh-${{ github.sha }}
+        ./DeployWebAKS.ps1 -name web -aksName ${{ secrets.CLUSTER_NAME }} -resourceGroup ${{ secrets.RESOURCE_GROUP }} -tag gh-${{ github.sha }}
