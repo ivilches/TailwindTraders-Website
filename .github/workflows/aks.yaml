@@ -32,7 +32,6 @@ jobs:
       shell: pwsh
       run: |
         az extension add --name aks-preview
-        az extension update --name aks-preview
 
     - name: Get AKS host
       id: aks_host
