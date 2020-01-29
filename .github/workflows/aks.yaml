@@ -37,10 +37,15 @@ jobs:
       shell: pwsh
       run: $(az aks show -n ${{ secrets.CLUSTER_NAME }} -g ${{ secrets.RESOURCE_GROUP }} | ConvertFrom-Json).addonProfiles.httpApplicationRouting.config.HTTPApplicationRoutingZoneName
       id: aks_host
+
+    - name: Directory content
+      working-directory: ${{GITHUB_WORKSPACE}}
+      shell: pwsh
+      run: ls
     - uses: azure/k8s-bake@v1
       with:
         renderEngine: 'helm2'
-        helmChart: '/Deploy/helm/' 
+        helmChart: '${{GITHUB_WORKSPACE}}/Deploy/helm/' 
         helm-version: 'latest'
         overrides: |
           image.tag:gh-aad5aa4a3a1e79f288919ab2442d57946d980f17
