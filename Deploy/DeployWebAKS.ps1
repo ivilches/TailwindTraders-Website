@@ -57,7 +57,7 @@ function createHelmCommand([string]$command, $chart) {
 
     $newcmd = $command
 
-    if (-not [string]::IsNullOrEmpty($tlsSecretName)) {
+    if (-not [string]::IsNullOrEmpty($tlsSecretNameToUse)) {
         $newcmd = "$newcmd --set ingress.protocol=https --set ingress.tls[0].secretName=$tlsSecretNameToUse --set ingress.tls[0].hosts={$aksHost}"
     }
     else {
@@ -79,27 +79,18 @@ Write-Host " Images tag: $tag"  -ForegroundColor Red
 Write-Host " TLS/SSL environment to enable: $tlsEnv"  -ForegroundColor Red
 Write-Host " --------------------------------------------------------" 
 
-if (-not [string]::IsNullOrEmpty($acrName)) {
-    $acrLogin=$(az acr show -n $acrName -g $resourceGroup | ConvertFrom-Json).loginServer
-}
-
-$repositoryLogin = "ivilches"
-
-if ([string]::IsNullOrEmpty($acrLogin)) {
-    $acrLogin = $repositoryLogin 
-}
+$acrLogin=$(az acr show -n $acrName -g $resourceGroup | ConvertFrom-Json).loginServer
 
 if ($tlsEnv -ne "custom") {
     $aksHost=$(az aks show -n $aksName -g $resourceGroup | ConvertFrom-Json).addonProfiles.httpApplicationRouting.config.HTTPApplicationRoutingZoneName
 
-    Write-Host "image repository login server is $repositoryLogin" -ForegroundColor Yellow
+    Write-Host "acr login server is $acrLogin" -ForegroundColor Yellow
     Write-Host "aksHost is $aksHost" -ForegroundColor Yellow 
 }else {
     $aksHost=$tlsHost
 }
 
 validate
-
 
 $appinsightsId=""
 
@@ -116,9 +107,8 @@ if (-not [string]::IsNullOrEmpty($appInsightsName)) {
 Push-Location helm
 
 Write-Host "Deploying web chart" -ForegroundColor Yellow
-$command = createHelmCommand "helm upgrade --install $name -f $valuesFile -f $b2cValuesFile --set inf.appinsights.id=$appinsightsId --set az.productvisitsurl=$afHost --set ingress.hosts={$aksHost} --set image.repository=$repositoryLogin/tailwindtraders --set image.tag=$tag" "web" 
-# cmd /c "$command"
-& "$command"
+$command = createHelmCommand "helm upgrade --install $name -f $valuesFile -f $b2cValuesFile --set inf.appinsights.id=$appinsightsId --set az.productvisitsurl=$afHost --set ingress.hosts={$aksHost} --set image.repository=$acrLogin/web --set image.tag=$tag" "web" 
+cmd /c "$command"
 Pop-Location
 
 Write-Host "Tailwind traders web deployed on AKS" -ForegroundColor Yellow

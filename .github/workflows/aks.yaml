@@ -9,19 +9,19 @@ jobs:
     runs-on: ubuntu-16.04
     steps:
     - uses: actions/checkout@v1
-    # Connect to Azure Container registry (ACR)
+
     - uses: azure/docker-login@v1
       with:
         username: ${{ secrets.DOCKERHUB_USERNAME }} 
         password: ${{ secrets.DOCKERHUB_PASSWORD }}
     
-    - name: Docker build and push
-      working-directory: Source/Tailwind.Traders.Web
-      run: | 
-        # docker build . --build-arg sdkTag=2.1 --build-arg runtimeTag=2.1 -t tailwindtraders/web:gh-${{ github.sha }} -t latest
-        # docker push tailwindtraders/web:gh-${{ github.sha }}
-        docker build . --build-arg sdkTag=2.1 --build-arg runtimeTag=2.1 -t ivilches/tailwindtraders:gh-${{ github.sha }} -t latest
-        docker push ivilches/tailwindtraders:gh-${{ github.sha }}
+    # - name: Docker build and push
+    #   working-directory: Source/Tailwind.Traders.Web
+    #   run: | 
+    #     # docker build . --build-arg sdkTag=2.1 --build-arg runtimeTag=2.1 -t tailwindtraders/web:gh-${{ github.sha }} -t latest
+    #     # docker push tailwindtraders/web:gh-${{ github.sha }}
+    #     docker build . --build-arg sdkTag=2.1 --build-arg runtimeTag=2.1 -t ivilches/tailwindtraders:gh-${{ github.sha }} -t latest
+    #     docker push ivilches/tailwindtraders:gh-${{ github.sha }}
 
     - uses: azure/login@v1
       with:
@@ -40,8 +40,9 @@ jobs:
         chmod 700 get_helm.sh
         ./get_helm.sh
         export PATH=/usr/local/bin/helm
+
     - name: Install Helm Chart
-      # working-directory: ./Deploy
       shell: pwsh
       run: |
-        helm upgrade --install tailwindtraders-web ./Deploy/helm/web -f ./Deploy/helm/gvalues.yaml -f ./Deploy/helm/values.b2c.yaml --set ingress.protocol=http --set inf.appinsights.id="" --set ingress.hosts[0]=fcacb0f417a84590bb54.eastus.aksapp.io --set image.repository=ivilches/tailwindtraders --set image.tag=gh-${{ github.sha }}
+        # helm upgrade --install tailwindtraders-web ./Deploy/helm/web -f ./Deploy/helm/gvalues.yaml -f ./Deploy/helm/values.b2c.yaml --set ingress.protocol=http --set ingress.hosts[0]=fcacb0f417a84590bb54.eastus.aksapp.io --set image.repository=ivilches/tailwindtraders --set image.tag=gh-${{ github.sha }}
+        helm upgrade --install tailwindtraders-web ./Deploy/helm/web -f ./Deploy/helm/gvalues.yaml -f ./Deploy/helm/values.b2c.yaml --set ingress.protocol=http --set ingress.hosts[0]=fcacb0f417a84590bb54.eastus.aksapp.io --set image.repository=ivilches/tailwindtraders --set image.tag=gh-2ab7f7516b35fff9f766ad0b2635b69e8474acbd
