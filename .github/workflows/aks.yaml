@@ -39,13 +39,13 @@ jobs:
       id: aks_host
 
     - name: Directory content
-      working-directory: ${{GITHUB_WORKSPACE}}
+      working-directory: ${{github.workspace}}
       shell: pwsh
       run: ls
     - uses: azure/k8s-bake@v1
       with:
         renderEngine: 'helm2'
-        helmChart: '${{GITHUB_WORKSPACE}}/Deploy/helm/' 
+        helmChart: '${{github.workspace}}/Deploy/helm/' 
         helm-version: 'latest'
         overrides: |
           image.tag:gh-aad5aa4a3a1e79f288919ab2442d57946d980f17
