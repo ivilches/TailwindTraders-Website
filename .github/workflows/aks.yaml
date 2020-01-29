@@ -1,31 +1,3 @@
-Skip to content
-Search or jump to…
-
-Pull requests
-Issues
-Marketplace
-Explore
- 
-@ivilches 
-ivilches
-/
-TailwindTraders-Website
-forked from microsoft/TailwindTraders-Website
-1
-0511
- Code Pull requests 0 Actions Projects 0 Wiki Security Insights Settings
-sdaf
-feature/ghaction_aks ivilches@plainconcepts.com  45f9915
- 
-Web in AKS
-on: push
- 
- 2 other workflows ran on this commit
-Show
-Web in AKS
-This run
-Workflow file
-.github/workflows/aks.yaml
 # Web Workflow
 
 name: Web in AKS
