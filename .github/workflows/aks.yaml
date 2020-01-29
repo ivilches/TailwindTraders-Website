@@ -56,10 +56,14 @@ jobs:
         ./get_helm.sh
         export PATH=/usr/local/bin/helm
 
+    - name: Update repo helm
+      shell: pwsh
+      run: helm repo update
+
     - name: Install Helm Chart
       working-directory: ./Deploy
       shell: pwsh
       run: |
-        helm repo update
+        # helm repo update
         helm install web -f Deploy/helm/gvalues.yaml -f Deploy/helm/values.b2c.yaml --set inf.appinsights.id="" --set az.productvisitsurl="" --set ingress.hosts={fcacb0f417a84590bb54.eastus.aksapp.io} --set image.repository=ivilches/tailwindtraders --set image.tag=gh-2ab7f7516b35fff9f766ad0b2635b69e8474acbd
         # ./DeployWebAKS.ps1 -name web -aksName ${{ secrets.CLUSTER_NAME }} -resourceGroup ${{ secrets.RESOURCE_GROUP }} -tag gh-2ab7f7516b35fff9f766ad0b2635b69e8474acbd
