@@ -45,13 +45,14 @@ jobs:
     - uses: azure/k8s-bake@v1
       with:
         renderEngine: 'helm2'
-        helmChart: '${{github.workspace}}/Deploy/helm/' 
+        helmChart: '${{github.workspace}}/Deploy/helm/web' 
         helm-version: 'latest'
         overrides: |
           image.tag:gh-aad5aa4a3a1e79f288919ab2442d57946d980f17
           name:web
           image.repository:ivilches/tests
-          ingress.hosts:${{ steps.aks_host.outputs }}
+          # ingress.hosts:${{ steps.aks_host.outputs }}
+          ingress.hosts:fcacb0f417a84590bb54.eastus.aksapp.io
       id: bake 
     - name: Install Helm Chart
       shell: pwsh
