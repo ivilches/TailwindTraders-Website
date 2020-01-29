@@ -34,7 +34,7 @@ jobs:
 
     - name: Other test
       shell: pwsh
-      run: echo $(az aks show -n ${{ secrets.CLUSTER_NAME }} -g ${{ secrets.CLUSTER_RESOURCE_GROUP }}).addonProfiles.httpApplicationRouting.config.HTTPApplicationRoutingZoneName
+      run: az aks show --resource-group ${{ secrets.CLUSTER_RESOURCE_GROUP }} --name ${{ secrets.CLUSTER_NAME }} --query addonProfiles.httpapplicationrouting.config.HTTPApplicationRoutingZoneName -o table
 
     # - name: Test
     #   shell: pwsh
