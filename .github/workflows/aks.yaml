@@ -58,7 +58,9 @@ jobs:
 
     - name: Update repo helm
       shell: pwsh
-      run: helm repo update
+      run: |
+        helm repo add stable https://kubernetes-charts.storage.googleapis.com/
+        helm repo update
 
     - name: Install Helm Chart
       working-directory: ./Deploy
