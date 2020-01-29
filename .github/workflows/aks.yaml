@@ -33,21 +33,6 @@ jobs:
         creds: '${{ secrets.AZURE_CREDENTIALS }}'
         cluster-name: ${{ secrets.CLUSTER_NAME }}
         resource-group: ${{ secrets.RESOURCE_GROUP }}
-    # - name: Fetch AKS host
-    #   shell: pwsh
-    #   run: $(az aks show -n ${{ secrets.CLUSTER_NAME }} -g ${{ secrets.RESOURCE_GROUP }} | ConvertFrom-Json).addonProfiles.httpApplicationRouting.config.HTTPApplicationRoutingZoneName
-    #   id: aks_host
-    # - uses: azure/k8s-bake@v1
-    #   with:
-    #     renderEngine: 'helm2'
-    #     helmChart: '${{github.workspace}}/Deploy/helm/web' 
-    #     helm-version: 'latest'
-    #     overrides: |
-    #       image.tag:gh-aad5aa4a3a1e79f288919ab2442d57946d980f17
-    #       name:web
-    #       image.repository:ivilches/tests
-    #       ingress.hosts:fcacb0f417a84590bb54.eastus.aksapp.io
-    #   id: bake 
 
     - name: Install Helm
       run: |
@@ -55,13 +40,6 @@ jobs:
         chmod 700 get_helm.sh
         ./get_helm.sh
         export PATH=/usr/local/bin/helm
-
-    - name: Update repo helm
-      shell: pwsh
-      run: |
-        helm repo add stable https://kubernetes-charts.storage.googleapis.com/
-        helm repo update
-
     - name: Install Helm Chart
       # working-directory: ./Deploy
       shell: pwsh
