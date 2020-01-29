@@ -42,7 +42,7 @@ jobs:
 
     - name: Set env
       shell: pwsh
-      run: echo ::set-env name=AKS_HOSTNAME::$(az aks show --resource-group ${{ secrets.CLUSTER_RESOURCE_GROUP }} --name ${{ secrets.CLUSTER_NAME }} --query addonProfiles.httpapplicationrouting.config.HTTPApplicationRoutingZoneName -o table)
+      run: echo ::set-env name=AKS_HOSTNAME::$(echo $(az aks show --resource-group ${{ secrets.CLUSTER_RESOURCE_GROUP }} --name ${{ secrets.CLUSTER_NAME }} --query addonProfiles.httpapplicationrouting.config.HTTPApplicationRoutingZoneName -o table))
     
     - name: Test env
       run: echo $AKS_HOSTNAME
