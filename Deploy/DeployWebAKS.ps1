@@ -117,7 +117,8 @@ Push-Location helm
 
 Write-Host "Deploying web chart" -ForegroundColor Yellow
 $command = createHelmCommand "helm upgrade --install $name -f $valuesFile -f $b2cValuesFile --set inf.appinsights.id=$appinsightsId --set az.productvisitsurl=$afHost --set ingress.hosts={$aksHost} --set image.repository=$repositoryLogin/tailwindtraders --set image.tag=$tag" "web" 
-cmd /c "$command"
+# cmd /c "$command"
+& "$command"
 Pop-Location
 
 Write-Host "Tailwind traders web deployed on AKS" -ForegroundColor Yellow
