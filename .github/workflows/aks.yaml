@@ -61,6 +61,5 @@ jobs:
       shell: pwsh
       run: |
         helm repo update
-        # helm upgrade --install web -f Deploy/helm/gvalues.yaml -f Deploy/helm/values.b2c.yaml --set inf.appinsights.id="" --set az.productvisitsurl="" --set ingress.hosts={$aksHost} --set image.repository=ivilches/tailwindtraders --set image.tag=${{ github.sha }}
-        # helm upgrade --install -f Deploy/powershell/_values-gh.yaml --set image.repository=${{ secrets.ACR_NAME }}.azurecr.io/web --set image.tag=gh-${{ github.sha }} --set image.uploaderRepository=${{ secrets.ACR_NAME }}.azurecr.io/modeluploader --set image.uploaderTag=gh-${{ github.sha }} --set uploaderEnabled=false --set scaleWeb=true --set replicaCount=2 web  ${{ secrets.ACR_NAME }}/web --version=1.0.0-${{ github.sha }}
-        ./DeployWebAKS.ps1 -name web -aksName ${{ secrets.CLUSTER_NAME }} -resourceGroup ${{ secrets.RESOURCE_GROUP }} -tag gh-2ab7f7516b35fff9f766ad0b2635b69e8474acbd
+        helm upgrade --install web -f Deploy/helm/gvalues.yaml -f Deploy/helm/values.b2c.yaml --set inf.appinsights.id="" --set az.productvisitsurl="" --set ingress.hosts={fcacb0f417a84590bb54.eastus.aksapp.io} --set image.repository=ivilches/tailwindtraders --set image.tag=gh-2ab7f7516b35fff9f766ad0b2635b69e8474acbd
+        # ./DeployWebAKS.ps1 -name web -aksName ${{ secrets.CLUSTER_NAME }} -resourceGroup ${{ secrets.RESOURCE_GROUP }} -tag gh-2ab7f7516b35fff9f766ad0b2635b69e8474acbd
