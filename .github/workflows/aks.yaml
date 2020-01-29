@@ -42,36 +42,36 @@ jobs:
     #   shell: pwsh
     #   run: az aks show --resource-group ${{ secrets.CLUSTER_RESOURCE_GROUP }} --name ${{ secrets.CLUSTER_NAME }} --query addonProfiles.httpapplicationrouting.config.HTTPApplicationRoutingZoneName -o table
 
-    - name: Test
-      shell: pwsh
-      run: echo ${{ steps.aks_host.outputs.aks_hostname }}
-
-    - name: Set env
-      shell: pwsh
-      run: echo ::set-env name=AKS_HOSTNAME::$(az aks show --resource-group ${{ secrets.CLUSTER_RESOURCE_GROUP }} --name ${{ secrets.CLUSTER_NAME }} --query addonProfiles.httpapplicationrouting.config.HTTPApplicationRoutingZoneName -o table)
-    
-    - name: Test env
-      run: echo $AKS_HOSTNAME
-    
-    - name: Test env
-      run: echo "df"
-    
-    # - name: Set AKS kubectl context
-    #   uses: azure/aks-set-context@v1
-    #   with:
-    #     creds: '${{ secrets.AZURE_CREDENTIALS }}'
-    #     cluster-name: ${{ secrets.CLUSTER_NAME }}
-    #     resource-group: ${{ secrets.RESOURCE_GROUP }}
-
-    # - name: Install Helm
-    #   run: |
-    #     curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 > get_helm.sh
-    #     chmod 700 get_helm.sh
-    #     ./get_helm.sh
-    #     export PATH=/usr/local/bin/helm
-
-    # - name: Install Helm Chart
+    # - name: Test
     #   shell: pwsh
-    #   run: |
-    #     # helm upgrade --install tailwindtraders-web ./Deploy/helm/web -f ./Deploy/helm/gvalues.yaml -f ./Deploy/helm/values.b2c.yaml --set ingress.protocol=http --set ingress.hosts[0]=fcacb0f417a84590bb54.eastus.aksapp.io --set image.repository=ivilches/tailwindtraders --set image.tag=gh-${{ github.sha }}
-    #     helm upgrade --install tailwindtraders-web ./Deploy/helm/web -f ./Deploy/helm/gvalues.yaml -f ./Deploy/helm/values.b2c.yaml --set ingress.protocol=http --set ingress.hosts[0]=fcacb0f417a84590bb54.eastus.aksapp.io --set image.repository=ivilches/tailwindtraders --set image.tag=gh-d2e6b1d6ff6936db47877f461faf03533dd833c5
+    #   run: echo ${{ steps.aks_host.outputs.aks_hostname }}
+
+    # - name: Set env
+    #   shell: pwsh
+    #   run: echo ::set-env name=AKS_HOSTNAME::$(az aks show --resource-group ${{ secrets.CLUSTER_RESOURCE_GROUP }} --name ${{ secrets.CLUSTER_NAME }} --query addonProfiles.httpapplicationrouting.config.HTTPApplicationRoutingZoneName -o table)
+    
+    # - name: Test env
+    #   run: echo $AKS_HOSTNAME
+    
+    # - name: Test env
+    #   run: echo "df"
+    
+    - name: Set AKS kubectl context
+      uses: azure/aks-set-context@v1
+      with:
+        creds: '${{ secrets.AZURE_CREDENTIALS }}'
+        cluster-name: ${{ secrets.CLUSTER_NAME }}
+        resource-group: ${{ secrets.RESOURCE_GROUP }}
+
+    - name: Install Helm
+      run: |
+        curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 > get_helm.sh
+        chmod 700 get_helm.sh
+        ./get_helm.sh
+        export PATH=/usr/local/bin/helm
+
+    - name: Install Helm Chart
+      shell: pwsh
+      run: |
+        # helm upgrade --install tailwindtraders-web ./Deploy/helm/web -f ./Deploy/helm/gvalues.yaml -f ./Deploy/helm/values.b2c.yaml --set ingress.protocol=http --set ingress.hosts[0]=fcacb0f417a84590bb54.eastus.aksapp.io --set image.repository=ivilches/tailwindtraders --set image.tag=gh-${{ github.sha }}
+        helm upgrade --install tailwindtraders-web ./Deploy/helm/web -f ./Deploy/helm/gvalues.yaml -f ./Deploy/helm/values.b2c.yaml --set ingress.protocol=http --set ingress.hosts[0]=${{ steps.aks_host.outputs.aks_hostname }} --set image.repository=ivilches/tailwindtraders --set image.tag=gh-d2e6b1d6ff6936db47877f461faf03533dd833c5
