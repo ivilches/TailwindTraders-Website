@@ -8,6 +8,8 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:    
+    - name: 'Checkout Github Action' 
+      uses: actions/checkout@master
 
     - name: Docker build
       working-directory: Source/Tailwind.Traders.Web
