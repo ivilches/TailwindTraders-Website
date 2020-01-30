@@ -22,16 +22,16 @@ jobs:
     steps:
     - uses: actions/checkout@v1
 
-    - uses: azure/docker-login@v1
-      with:
-        username: ${{ secrets.DOCKERHUB_USERNAME }} 
-        password: ${{ secrets.DOCKERHUB_PASSWORD }}
+    # - uses: azure/docker-login@v1
+    #   with:
+    #     username: ${{ secrets.DOCKERHUB_USERNAME }} 
+    #     password: ${{ secrets.DOCKERHUB_PASSWORD }}
     
-    - name: Docker build and push
-      working-directory: Source/Tailwind.Traders.Web
-      run: | 
-        docker build . --build-arg sdkTag=2.1 --build-arg runtimeTag=2.1 -t tailwindtraders/web:gh-${{ github.sha }} -t latest
-        docker push tailwindtraders/web:gh-${{ github.sha }}
+    # - name: Docker build and push
+    #   working-directory: Source/Tailwind.Traders.Web
+    #   run: | 
+    #     docker build . --build-arg sdkTag=2.1 --build-arg runtimeTag=2.1 -t tailwindtraders/web:gh-${{ github.sha }} -t latest
+    #     docker push tailwindtraders/web:gh-${{ github.sha }}
 
     - uses: azure/login@v1
       with:
@@ -56,4 +56,4 @@ jobs:
 
       run: |
         # helm upgrade --install tailwindtraders-web ./Deploy/helm/web -f ./Deploy/helm/gvalues.yaml -f ./Deploy/helm/values.b2c.yaml  --set ingress.hosts={$aksHost}  --set ingress.protocol=https --set ingress.tls[0].hosts={$aksHost}  --set ingress.tls[0].secretName=$tlsSecretName --set image.repository=tailwindtraders/web --set image.tag=gh-${{ github.sha }}
-        helm upgrade --install tailwindtraders-web ./Deploy/helm/web -f ./Deploy/helm/gvalues.yaml -f ./Deploy/helm/values.b2c.yaml  --set ingress.hosts={$aksHost}  --set ingress.protocol=http --set image.repository=ivilches/tests --set image.tag=gh-${{ github.sha }}
+        helm upgrade --install tailwindtraders-web ./Deploy/helm/web -f ./Deploy/helm/gvalues.yaml -f ./Deploy/helm/values.b2c.yaml  --set ingress.hosts={$aksHost}  --set ingress.protocol=http --set image.repository=ivilches/tests --set image.tag=gh-b091f7dfc8019ce86c5a36b5185a214c02f3bacb
