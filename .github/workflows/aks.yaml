@@ -1,13 +1,23 @@
 name: Web in AKS
 
-# on: [push]
-on:
-  push:
-    branches:
-      - master
+# Deploy the Tailwind Traders Web as a deployment in a EXISTING AKS THAT ALREADY HAS THE BACKEND INSTALLED
+#
+# Note: The AKS MUST HAVE TLS INSTALLED (Please refer to .....). Installing the web on AKS without TLS enabled is not supported.
+
+# on:
+#   push:
+#     branches:
+#       - master
+
+on: [push]
 
 jobs:
   buildpush:
+    env:
+      # TT public environment variables. Please edit to match your environment
+      # akshost: backend.tailwindtraders.com            # AKS HOST NAME: You must use your AKS DNS name      
+      akshost: fcacb0f417a84590bb54.eastus.aksapp.io            # AKS HOST NAME: You must use your AKS DNS name
+      tlsSecretName: tt-tls-custom                    # AKS SECRET NAME HAVING THE TLS CERT
     runs-on: ubuntu-16.04
     steps:
     - uses: actions/checkout@v1
@@ -20,25 +30,13 @@ jobs:
     - name: Docker build and push
       working-directory: Source/Tailwind.Traders.Web
       run: | 
-        # docker build . --build-arg sdkTag=2.1 --build-arg runtimeTag=2.1 -t tailwindtraders/web:gh-${{ github.sha }} -t latest
-        # docker push tailwindtraders/web:gh-${{ github.sha }}
-        docker build . --build-arg sdkTag=2.1 --build-arg runtimeTag=2.1 -t ivilches/tailwindtraders:gh-${{ github.sha }} -t latest
-        docker push ivilches/tailwindtraders:gh-${{ github.sha }}
+        docker build . --build-arg sdkTag=2.1 --build-arg runtimeTag=2.1 -t tailwindtraders/web:gh-${{ github.sha }} -t latest
+        docker push tailwindtraders/web:gh-${{ github.sha }}
 
     - uses: azure/login@v1
       with:
         creds: '${{ secrets.AZURE_CREDENTIALS }}'
 
-    
-    - name: Install aks-preview
-      shell: pwsh
-      run: |
-        az extension add --name aks-preview
-    - name: Get AKS host
-      id: aks_host
-      shell: pwsh
-      run: echo "::set-output name=host_name::$($(az aks show -n ${{ secrets.CLUSTER_NAME }} -g ${{ secrets.CLUSTER_RESOURCE_GROUP }} | ConvertFrom-Json).addonProfiles.httpApplicationRouting.config.HTTPApplicationRoutingZoneName)"
-    
     - name: Set AKS kubectl context
       uses: azure/aks-set-context@v1
       with:
@@ -55,6 +53,7 @@ jobs:
 
     - name: Install Helm Chart
       shell: pwsh
+
       run: |
-        # helm upgrade --install tailwindtraders-web ./Deploy/helm/web -f ./Deploy/helm/gvalues.yaml -f ./Deploy/helm/values.b2c.yaml --set ingress.protocol=http --set ingress.hosts[0]=fcacb0f417a84590bb54.eastus.aksapp.io --set image.repository=ivilches/tailwindtraders --set image.tag=gh-${{ github.sha }}
-        helm upgrade --install tailwindtraders-web ./Deploy/helm/web -f ./Deploy/helm/gvalues.yaml -f ./Deploy/helm/values.b2c.yaml --set ingress.protocol=http --set ingress.hosts[0]=${{ steps.aks_host.outputs.host_name }} --set image.repository=ivilches/tailwindtraders --set image.tag=gh-d2e6b1d6ff6936db47877f461faf03533dd833c5
+        # helm upgrade --install tailwindtraders-web ./Deploy/helm/web -f ./Deploy/helm/gvalues.yaml -f ./Deploy/helm/values.b2c.yaml  --set ingress.hosts={$aksHost}  --set ingress.protocol=https --set ingress.tls[0].hosts={$aksHost}  --set ingress.tls[0].secretName=$tlsSecretName --set image.repository=tailwindtraders/web --set image.tag=gh-${{ github.sha }}
+        helm upgrade --install tailwindtraders-web ./Deploy/helm/web -f ./Deploy/helm/gvalues.yaml -f ./Deploy/helm/values.b2c.yaml  --set ingress.hosts={$aksHost}  --set ingress.protocol=http --set image.repository=ivilches/tests --set image.tag=gh-${{ github.sha }}
