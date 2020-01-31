@@ -4,12 +4,12 @@ name: Web in AKS
 #
 # Note: The AKS MUST HAVE TLS INSTALLED (Please refer to .....). Installing the web on AKS without TLS enabled is not supported.
 
-# on:
-#   push:
-#     branches:
-#       - master
+on:
+  push:
+    branches:
+      - master
 
-on: [push]
+# on: [push]
 
 jobs:
   buildpush:
