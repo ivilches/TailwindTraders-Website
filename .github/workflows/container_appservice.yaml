@@ -1,4 +1,4 @@
-# name: Deploy in a containerized App Service
+name: Deploy in a containerized App Service
 
 on:
   push:
